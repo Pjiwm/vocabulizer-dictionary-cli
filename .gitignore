@@ -5,4 +5,4 @@ venv/
 downloads/
 download.log
 db_files/*
-!db_files/dictionaries.json
+__pycache__/

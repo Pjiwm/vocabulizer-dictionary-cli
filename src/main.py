@@ -6,7 +6,7 @@ import requests
 import subprocess
 from InquirerPy import inquirer
 from pathlib import Path
-from tqdm import tqdm  # For progress bar
+from tqdm import tqdm
 
 required_dir = "dictionary_builders"
 current_dir = os.path.basename(os.getcwd())
