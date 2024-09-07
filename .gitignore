@@ -1,0 +1,8 @@
+*.zip
+*.db
+extracted_files/
+venv/
+downloads/
+download.log
+db_files/*
+!db_files/dictionaries.json

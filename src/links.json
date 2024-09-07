@@ -1,0 +1,67 @@
+{
+    "dictionaries": [
+        {
+            "name": "JMdict English (Japanese)",
+            "url": "https://github.com/FooSoft/yomichan/raw/dictionaries/jmdict_english.zip",
+            "fileName": "jmdict_english.zip",
+            "dbFileName": "Japanese_English.db",
+            "script": "database_installers/jmdict.py"
+        },
+        {
+            "name": "JMdict Dutch (Japanese)",
+            "url": "https://github.com/FooSoft/yomichan/raw/dictionaries/jmdict_dutch.zip",
+            "fileName": "jmdict_dutch.zip",
+            "dbFileName": "Japanese_Dutch.db",
+            "script": "database_installers/jmdict.py"
+        },
+        {
+            "name": "JMdict German (Japanese)",
+            "url": "https://github.com/FooSoft/yomichan/raw/dictionaries/jmdict_german.zip",
+            "fileName": "jmdict_german.zip",
+            "dbFileName": "Japanese_German.db",
+            "script": "database_installers/jmdict.py"
+        },
+        {
+            "name": "JMdict French (Japanese)",
+            "url": "https://github.com/FooSoft/yomichan/raw/dictionaries/jmdict_french.zip",
+            "fileName": "jmdict_french.zip",
+            "dbFileName": "Japanese_French.db",
+            "script": "database_installers/jmdict.py"
+        },
+        {
+            "name": "JMdict Hungarian (Japanese)",
+            "url": "https://github.com/FooSoft/yomichan/raw/dictionaries/jmdict_hungarian.zip",
+            "fileName": "jmdict_hungarian.zip",
+            "dbFileName": "Japanese_Hungarian.db",
+            "script": "database_installers/jmdict.py"
+        },
+        {
+            "name": "JMdict Russian (Japanese)",
+            "url": "https://github.com/FooSoft/yomichan/raw/dictionaries/jmdict_russian.zip",
+            "fileName": "jmdict_russian.zip",
+            "dbFileName": "Japanese_Russian.db",
+            "script": "database_installers/jmdict.py"
+        },
+        {
+            "name": "JMdict Slovenian (Japanese)",
+            "url": "https://github.com/FooSoft/yomichan/raw/dictionaries/jmdict_slovenian.zip",
+            "fileName": "jmdict_slovenian.zip",
+            "dbFileName": "Japanese_Slovenian.db",
+            "script": "database_installers/jmdict.py"
+        },
+        {
+            "name": "JMdict Spanish (Japanese)",
+            "url": "https://github.com/FooSoft/yomichan/raw/dictionaries/jmdict_spanish.zip",
+            "fileName": "jmdict_spanish.zip",
+            "dbFileName": "Japanese_Spanish.db",
+            "script": "database_installers/jmdict.py"
+        },
+        {
+            "name": "JMdict Swedish (Japanese)",
+            "url": "https://github.com/FooSoft/yomichan/raw/dictionaries/jmdict_swedish.zip",
+            "fileName": "jmdict_swedish.zip",
+            "dbFileName": "Japanese_Swedish.db",
+            "script": "database_installers/jmdict.py"
+        }
+    ]
+}
