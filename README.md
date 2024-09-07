@@ -54,6 +54,8 @@ contributions to **Vocabulizer Dictionary CLI** are welcome. If you’d like to 
 
 To contribute, please fork the repository, make your changes, and submit a pull request. 
 
+[Contributing guide](CONTRIBUTING.md). 
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE). 
