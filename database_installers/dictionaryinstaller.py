@@ -39,15 +39,15 @@ class DictionaryInstaller:
         self.cursor = self.conn.cursor()
 
     def cleanup(self):
-        """Clean up the extracted files, the downloaded file, and other temporary resources."""
         # Remove extracted files and directories
         print(f"Cleaning up extracted files from {self.extract_dir}")
-        for root, dirs, files in os.walk(self.extract_dir, topdown=False):
-            for file in files:
-                os.remove(os.path.join(root, file))
-            for directory in dirs:
-                os.rmdir(os.path.join(root, directory))
-        os.rmdir(self.extract_dir)
+        if os.path.exists(self.extract_dir):
+            for root, dirs, files in os.walk(self.extract_dir, topdown=False):
+                for file in files:
+                    os.remove(os.path.join(root, file))
+                for directory in dirs:
+                    os.rmdir(os.path.join(root, directory))
+            os.rmdir(self.extract_dir)
 
         # Remove the downloaded file
         if os.path.exists(self.downloaded_file):
