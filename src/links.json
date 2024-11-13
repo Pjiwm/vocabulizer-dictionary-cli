@@ -62,6 +62,13 @@
             "fileName": "jmdict_swedish.zip",
             "dbFileName": "Japanese_Swedish.db",
             "script": "database_installers/jmdict.py"
+        },
+        {
+            "name": "French machine-readable dictionary English (French)",
+            "url": "https://kaikki.org/dictionary/French/kaikki.org-dictionary-French.jsonl",
+            "fileName": "dictionary.jsonl",
+            "dbFileName": "French_English.db",
+            "script": "database_installers/kaikki_french.py"
         }
     ]
 }
