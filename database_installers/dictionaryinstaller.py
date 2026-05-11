@@ -19,18 +19,48 @@ class DictionaryInstaller:
         self.db_dir.mkdir(exist_ok=True)
 
     def create_tables(self):
-        """Create the necessary tables in the database."""
+        """Create the normalized tables in the database."""
         self.cursor.execute('''
-            CREATE TABLE IF NOT EXISTS entries (
-                id INTEGER PRIMARY KEY,
-                term TEXT,
-                reading TEXT,
-                pos TEXT,
-                frequency INTEGER,
-                translation TEXT,
-                additional_info TEXT
+            CREATE TABLE IF NOT EXISTS words (
+                sequence INTEGER PRIMARY KEY
             )
         ''')
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS senses (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                sequence INTEGER NOT NULL REFERENCES words(sequence),
+                term TEXT NOT NULL,
+                reading TEXT NOT NULL,
+                pos TEXT,
+                frequency INTEGER DEFAULT 0,
+                translation TEXT
+            )
+        ''')
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS kanji (
+                character TEXT PRIMARY KEY,
+                stroke_count INTEGER,
+                grade INTEGER,
+                jlpt_level INTEGER,
+                meanings TEXT,
+                readings_on TEXT,
+                readings_kun TEXT
+            )
+        ''')
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS glosses (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                sense_id INTEGER NOT NULL REFERENCES senses(id),
+                gloss TEXT NOT NULL,
+                position INTEGER NOT NULL DEFAULT 0
+            )
+        ''')
+        self.cursor.execute('CREATE INDEX IF NOT EXISTS idx_sense_term ON senses(term)')
+        self.cursor.execute('CREATE INDEX IF NOT EXISTS idx_sense_reading ON senses(reading)')
+        self.cursor.execute('CREATE INDEX IF NOT EXISTS idx_sense_sequence ON senses(sequence)')
+        self.cursor.execute('CREATE INDEX IF NOT EXISTS idx_gloss_text ON glosses(gloss COLLATE NOCASE)')
+        self.cursor.execute('CREATE INDEX IF NOT EXISTS idx_gloss_sense ON glosses(sense_id)')
+        self.conn.commit()
         print("Database tables created.")
 
     def create_db_connection(self):

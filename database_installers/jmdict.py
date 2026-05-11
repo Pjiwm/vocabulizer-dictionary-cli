@@ -14,8 +14,8 @@ class JMdictInstaller(DictionaryInstaller):
 
     def populate_db(self, cursor, conn):
         print(f"Populating database from {self.extract_dir}")
-        for json_file in os.listdir(self.extract_dir):
-            if json_file.endswith('.json'):
+        for json_file in sorted(os.listdir(self.extract_dir)):
+            if json_file.startswith('term_bank_') and json_file.endswith('.json'):
                 file_path = os.path.join(self.extract_dir, json_file)
                 with open(file_path, 'r', encoding='utf-8') as f:
                     data = json.load(f)
@@ -28,16 +28,28 @@ class JMdictInstaller(DictionaryInstaller):
                             pos = entry[2]
                             frequency = entry[4]
                             gloss_list = entry[5]
-                            additional_info = entry[7]
+                            sequence = entry[6]
+
+                            cursor.execute(
+                                'INSERT OR IGNORE INTO words (sequence) VALUES (?)',
+                                (sequence,)
+                            )
+
+                            translation = ', '.join(gloss_list)
 
                             cursor.execute(
                                 '''
-                                INSERT INTO entries (term, reading, pos, frequency, translation, additional_info)
+                                INSERT INTO senses (sequence, term, reading, pos, frequency, translation)
                                 VALUES (?, ?, ?, ?, ?, ?)
                                 ''',
-                                (term, reading, pos, frequency,
-                                 ', '.join(gloss_list), additional_info)
+                                (sequence, term, reading, pos, frequency, translation)
                             )
+                            sense_id = cursor.lastrowid
+                            for gpos, gloss in enumerate(gloss_list):
+                                cursor.execute(
+                                    'INSERT INTO glosses (sense_id, gloss, position) VALUES (?, ?, ?)',
+                                    (sense_id, gloss, gpos)
+                                )
                         else:
                             print(f"Skipping malformed entry: {entry}")
 
