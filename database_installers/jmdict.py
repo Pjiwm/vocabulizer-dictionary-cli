@@ -16,12 +16,66 @@ def _extract_text(obj):
     return ''
 
 
-def extract_and_populate(zip_path, extract_dir, cursor, conn):
-    """Extract JMdict Yomitan zip and populate the words/senses/glosses tables.
+_FORM_MARKERS = {'★', 'Ⓡ', '\U0001f141', '㊒', '⛬', '⚠', '∅'}
 
-    Handles both legacy format (glosses as plain strings) and modern
-    Yomitan format (glosses as structured content dicts).
+def _is_form_annotation(text):
+    """Check if a gloss is actually a form annotation (not a real meaning).
+    Yomitan uses various markers: ★ (common), Ⓡ/🅁 (rare), ㊒ ⛬ ⚠ ∅ etc."""
+    return bool(text and any(m in text for m in _FORM_MARKERS))
+
+
+def _extract_glosses(gloss_list_raw):
+    """Extract individual gloss strings from Yomitan structured content.
+
+    The new Yomitan format wraps glosses in structured-content dicts with
+    nested ul > li tags. Each li is one meaning. We extract each li separately
+    to maintain individual gloss entries for search.
     """
+    glosses = []
+
+    for item in gloss_list_raw:
+        if isinstance(item, str):
+            text = item.strip()
+            if text and not _is_form_annotation(text):
+                glosses.append(text)
+            continue
+
+        if not isinstance(item, dict):
+            continue
+
+        # Try to find li items (individual meanings) in the structure
+        li_items = []
+        _find_li_items(item, li_items)
+
+        if li_items:
+            for li in li_items:
+                text = _extract_text(li).strip()
+                if text and not _is_form_annotation(text):
+                    glosses.append(text)
+        else:
+            # Fallback: extract all text as one gloss
+            text = _extract_text(item).strip()
+            if text and not _is_form_annotation(text):
+                glosses.append(text)
+
+    return glosses
+
+
+def _find_li_items(obj, results):
+    """Recursively find all li-tagged content nodes."""
+    if isinstance(obj, dict):
+        if obj.get('tag') == 'li' and 'content' in obj:
+            results.append(obj['content'])
+            return
+        if 'content' in obj:
+            _find_li_items(obj['content'], results)
+    elif isinstance(obj, list):
+        for item in obj:
+            _find_li_items(item, results)
+
+
+def extract_and_populate(zip_path, extract_dir, cursor, conn):
+    """Extract JMdict Yomitan zip and populate the words/senses/glosses tables."""
     print(f"Extracting {zip_path} to {extract_dir}")
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall(extract_dir)
@@ -46,15 +100,7 @@ def extract_and_populate(zip_path, extract_dir, cursor, conn):
                     gloss_list_raw = entry[5]
                     sequence = entry[6]
 
-                    # Extract plain text from each gloss (may be str or dict)
-                    glosses = []
-                    for g in gloss_list_raw:
-                        if isinstance(g, str):
-                            text = g.strip()
-                        else:
-                            text = _extract_text(g).strip()
-                        if text:
-                            glosses.append(text)
+                    glosses = _extract_glosses(gloss_list_raw)
 
                     if not glosses:
                         continue
