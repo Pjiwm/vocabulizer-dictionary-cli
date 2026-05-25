@@ -2,11 +2,15 @@ import os
 import sys
 import json
 import logging
+import sqlite3
 import requests
-import subprocess
 from InquirerPy import inquirer
 from pathlib import Path
 from tqdm import tqdm
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+from database_installers.dictionaryinstaller import DictionaryInstaller
+from database_installers import jmdict, kanjidic
 
 required_dir = "dictionary_builders"
 current_dir = os.path.basename(os.getcwd())
@@ -32,20 +36,21 @@ with open("src/links.json", "r") as f:
 downloads_dir = Path("downloads")
 downloads_dir.mkdir(exist_ok=True)
 
+extract_dir = './extracted_files'
+
 
 def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
 
 
-def download_file(name, url, destination, original_filename):
+def download_file(name, url, destination, filename):
     try:
         logging.info(f"Starting download for: {name}")
         response = requests.get(url, stream=True)
         response.raise_for_status()
         file_size = int(response.headers.get('content-length', 0))
-        dest_file = destination / original_filename
+        dest_file = destination / filename
 
-        # Use tqdm for progress bar
         with open(dest_file, "wb") as f, tqdm(
             desc=name,
             total=file_size,
@@ -61,19 +66,87 @@ def download_file(name, url, destination, original_filename):
         return dest_file
     except requests.exceptions.RequestException as e:
         logging.error(f"Failed to download {name}: {e}")
+        print(f"Error downloading {name}: {e}")
         return None
+
+
+def build_dictionary(dictionary):
+    """Download JMdict + KANJIDIC and build a single SQLite database."""
+    name = dictionary["name"]
+    db_file_name = dictionary["dbFileName"]
+
+    print(f"\n=== Building {name} ===\n")
+
+    # Download JMdict
+    jmdict_file = download_file(
+        f"{name} (JMdict)",
+        dictionary["jmdict_url"],
+        downloads_dir,
+        dictionary["jmdict_file"]
+    )
+    if not jmdict_file:
+        print(f"Failed to download JMdict for {name}. Skipping.")
+        return
+
+    # Download KANJIDIC
+    kanjidic_file = download_file(
+        f"{name} (KANJIDIC)",
+        dictionary["kanjidic_url"],
+        downloads_dir,
+        dictionary["kanjidic_file"]
+    )
+    if not kanjidic_file:
+        print(f"Failed to download KANJIDIC for {name}. Skipping.")
+        return
+
+    # Set up database
+    installer = DictionaryInstaller(db_file_name)
+    installer.setup()
+
+    conn = sqlite3.connect(installer.db_file)
+    cursor = conn.cursor()
+    installer.create_tables(cursor, conn)
+
+    # Populate JMdict data
+    jmdict_extract = os.path.join(extract_dir, 'jmdict')
+    os.makedirs(jmdict_extract, exist_ok=True)
+    jmdict.extract_and_populate(jmdict_file, jmdict_extract, cursor, conn)
+
+    # Populate KANJIDIC data
+    kanjidic_extract = os.path.join(extract_dir, 'kanjidic')
+    os.makedirs(kanjidic_extract, exist_ok=True)
+    kanjidic.extract_and_populate(kanjidic_file, kanjidic_extract, cursor, conn)
+
+    # Print stats
+    cursor.execute('SELECT COUNT(*) FROM words')
+    word_count = cursor.fetchone()[0]
+    cursor.execute('SELECT COUNT(*) FROM senses')
+    sense_count = cursor.fetchone()[0]
+    cursor.execute('SELECT COUNT(*) FROM kanji')
+    kanji_count = cursor.fetchone()[0]
+    print(f"\n  Database: {db_file_name}")
+    print(f"  Words: {word_count}, Senses: {sense_count}, Kanji: {kanji_count}\n")
+
+    conn.close()
+    installer.cleanup()
+
+    # Clean up downloaded zips
+    os.remove(jmdict_file)
+    os.remove(kanjidic_file)
+
+    print(f"=== {name} complete ===\n")
 
 
 def main():
     while True:
         clear_screen()
 
-        # Prompt user to select which file to download or to exit
-        choices = [dictionary["name"] for dictionary in data["dictionaries"]]
-        choices.append("Exit")  # Add the Exit option at the end
+        choices = [d["name"] for d in data["dictionaries"]]
+        choices.append("Build All")
+        choices.append("Exit")
 
         selected = inquirer.select(
-            message="Select a file to download or choose 'Exit' to quit:",
+            message="Select a dictionary to build or choose an option:",
             choices=choices
         ).execute()
 
@@ -81,39 +154,21 @@ def main():
             logging.info("User exited the program.")
             break
 
-        # Get the selected dictionary info
-        selected_dictionary = next(
-            item for item in data["dictionaries"] if item["name"] == selected)
-        name = selected_dictionary["name"]
-        url = selected_dictionary["url"]
-        original_filename = selected_dictionary["fileName"]
-        db_file_name = selected_dictionary["dbFileName"]
-        script_path = selected_dictionary.get("script")
-
-        # Confirm before downloading
-        confirm = inquirer.confirm(
-            message=f"Do you want to download {name}?"
-        ).execute()
-
-        if confirm:
-            downloaded_file = download_file(
-                name, url, downloads_dir, original_filename)
-
-            if downloaded_file:
-                logging.info(f"Downloaded and saved as: {original_filename}")
-                print(f"Downloaded and saved as: {original_filename}")
-
-                if script_path:
-                    logging.info(
-                        f"Running the installation script: {script_path}")
-                    subprocess.run(
-                        ["python", script_path, downloaded_file, db_file_name])
-                else:
-                    logging.warning(
-                        f"No installation script specified for {name}.")
-
+        if selected == "Build All":
+            confirm = inquirer.confirm(
+                message="Build all dictionaries? This will download and process all sources."
+            ).execute()
+            if confirm:
+                for dictionary in data["dictionaries"]:
+                    build_dictionary(dictionary)
         else:
-            logging.info(f"Download of {name} was canceled by the user.")
+            dictionary = next(
+                d for d in data["dictionaries"] if d["name"] == selected)
+            confirm = inquirer.confirm(
+                message=f"Build {dictionary['name']}?"
+            ).execute()
+            if confirm:
+                build_dictionary(dictionary)
 
         inquirer.select("Press enter to continue",
                         choices=["Continue"]).execute()
