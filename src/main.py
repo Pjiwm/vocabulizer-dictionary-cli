@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from database_installers.dictionaryinstaller import DictionaryInstaller
-from database_installers import jmdict, kanjidic
+from database_installers import jmdict, kanjidic, jlpt
 
 required_dir = "dictionary_builders"
 current_dir = os.path.basename(os.getcwd())
@@ -117,6 +117,32 @@ def build_dictionary(dictionary):
     os.makedirs(kanjidic_extract, exist_ok=True)
     kanjidic.extract_and_populate(kanjidic_file, kanjidic_extract, cursor, conn)
 
+    # Build kanji-word lookup table for fast cross-referencing
+    print("  Building kanji_word_map...")
+    cursor.execute('''
+        INSERT OR IGNORE INTO kanji_word_map (character, sequence)
+        SELECT DISTINCT k.character, s.sequence
+        FROM kanji k
+        INNER JOIN senses s ON INSTR(s.term, k.character) > 0
+    ''')
+    conn.commit()
+    cursor.execute('SELECT COUNT(*) FROM kanji_word_map')
+    kwm_count = cursor.fetchone()[0]
+    print(f"  kanji_word_map: {kwm_count} entries")
+
+    # Backfill N5 kanji from grade 1 (KANJIDIC uses old JLPT 1-4, no N5)
+    print("  Backfilling N5 kanji (grade 1)...")
+    cursor.execute('''
+        UPDATE kanji SET jlpt_level = 5
+        WHERE grade = 1
+    ''')
+    n5_backfilled = cursor.rowcount
+    conn.commit()
+    print(f"  N5 kanji backfilled: {n5_backfilled}")
+
+    # Populate word-level JLPT data from external lists
+    jlpt.populate_word_jlpt(cursor, conn)
+
     # Print stats
     cursor.execute('SELECT COUNT(*) FROM words')
     word_count = cursor.fetchone()[0]
@@ -124,8 +150,11 @@ def build_dictionary(dictionary):
     sense_count = cursor.fetchone()[0]
     cursor.execute('SELECT COUNT(*) FROM kanji')
     kanji_count = cursor.fetchone()[0]
+    cursor.execute('SELECT COUNT(*) FROM words WHERE jlpt_level IS NOT NULL')
+    jlpt_count = cursor.fetchone()[0]
     print(f"\n  Database: {db_file_name}")
-    print(f"  Words: {word_count}, Senses: {sense_count}, Kanji: {kanji_count}\n")
+    print(f"  Words: {word_count}, Senses: {sense_count}, Kanji: {kanji_count}")
+    print(f"  Words with JLPT: {jlpt_count}\n")
 
     conn.close()
     installer.cleanup()

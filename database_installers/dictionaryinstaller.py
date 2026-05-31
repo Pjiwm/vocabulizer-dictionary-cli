@@ -22,7 +22,8 @@ class DictionaryInstaller:
         """Create the normalized tables in the database."""
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS words (
-                sequence INTEGER PRIMARY KEY
+                sequence INTEGER PRIMARY KEY,
+                jlpt_level INTEGER
             )
         ''')
         cursor.execute('''
@@ -55,6 +56,14 @@ class DictionaryInstaller:
                 position INTEGER NOT NULL DEFAULT 0
             )
         ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS kanji_word_map (
+                character TEXT NOT NULL,
+                sequence INTEGER NOT NULL,
+                PRIMARY KEY (character, sequence)
+            )
+        ''')
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_kwm_sequence ON kanji_word_map(sequence)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_sense_term ON senses(term)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_sense_reading ON senses(reading)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_sense_sequence ON senses(sequence)')
