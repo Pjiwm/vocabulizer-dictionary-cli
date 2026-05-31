@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from database_installers.dictionaryinstaller import DictionaryInstaller
-from database_installers import jmdict, kanjidic, jlpt
+from database_installers import jmdict, kanjidic, jlpt, pitch_accent
 
 required_dir = "dictionary_builders"
 current_dir = os.path.basename(os.getcwd())
@@ -143,6 +143,9 @@ def build_dictionary(dictionary):
     # Populate word-level JLPT data from external lists
     jlpt.populate_word_jlpt(cursor, conn)
 
+    # Populate pitch accent from UniDic
+    pitch_accent.populate_pitch_accent(cursor, conn)
+
     # Print stats
     cursor.execute('SELECT COUNT(*) FROM words')
     word_count = cursor.fetchone()[0]
@@ -152,9 +155,11 @@ def build_dictionary(dictionary):
     kanji_count = cursor.fetchone()[0]
     cursor.execute('SELECT COUNT(*) FROM words WHERE jlpt_level IS NOT NULL')
     jlpt_count = cursor.fetchone()[0]
+    cursor.execute('SELECT COUNT(DISTINCT term || reading) FROM senses WHERE pitch_accent IS NOT NULL')
+    pitch_count = cursor.fetchone()[0]
     print(f"\n  Database: {db_file_name}")
     print(f"  Words: {word_count}, Senses: {sense_count}, Kanji: {kanji_count}")
-    print(f"  Words with JLPT: {jlpt_count}\n")
+    print(f"  Words with JLPT: {jlpt_count}, With pitch accent: {pitch_count}\n")
 
     conn.close()
     installer.cleanup()
