@@ -56,6 +56,17 @@ To contribute, please fork the repository, make your changes, and submit a pull 
 
 [Contributing guide](CONTRIBUTING.md). 
 
+## Data Attribution
+
+The dictionary databases built by this tool use data from the
+[Electronic Dictionary Research and Development Group](https://www.edrdg.org/)
+(EDRDG). The JMdict/EDICT and KANJIDIC2 files are licensed under
+[CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).
+The generated .db files are derivative works and inherit this license.
+
+See [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for full details.
+
 ## License
 
-This project is licensed under the [MIT License](LICENSE). 
+This project's source code is licensed under the [MIT License](LICENSE).
+Dictionary data has its own licensing - see above.
