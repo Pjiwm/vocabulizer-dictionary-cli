@@ -34,7 +34,8 @@ class DictionaryInstaller:
                 reading TEXT NOT NULL,
                 pos TEXT,
                 frequency INTEGER DEFAULT 0,
-                translation TEXT
+                translation TEXT,
+                pitch_accent TEXT
             )
         ''')
         cursor.execute('''
