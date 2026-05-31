@@ -1,61 +1,40 @@
 # Vocabulizer Dictionary CLI
 
-**Vocabulizer Dictionary CLI** is a tool for creating and managing dictionary databases with a generic schema. This CLI tool is designed to handle various dictionary formats and is ideal for building custom dictionary databases.
+CLI tool for building Japanese dictionary SQLite databases from JMdict/KANJIDIC source data.
 
-## Features
+## Setup
 
-- **Generic DB Schema:** Provides a consistent schema for different dictionaries.
-- **Support for Multiple Dictionary Formats:** Allow custom implementations to parse different file types.
-- **Extensible:** Easy to add support for new dictionary formats and languages.
-
-## Requirements
-
-- Python 3.7 or later
-- A virtual environment (venv)
-
-## Installation
-
-1. **Clone the Repository:**
-
-    ```bash
-    git clone https://github.com/yourusername/vocabulizer-dictionary-cli.git
-    cd vocabulizer-dictionary-cli
-    ```
-
-2. **Create and Activate a Virtual Environment:**
-
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-    ```
-
-3. **Install Required Packages:**
-
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-4. **Run the CLI Tool:**
-
-    ```bash
-    python src/main.py
-    ```
+```bash
+git clone https://github.com/Pjiwm/vocabulizer-dictionary-cli.git
+cd vocabulizer-dictionary-cli
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
 ## Usage
 
-The CLI tool is used to create and manage dictionary databases. You can customize it by adding new dictionary formats or languages. For more details on usage, refer to the documentation within the `src` directory.
+```bash
+python src/main.py
+```
 
-## Contribution
+This downloads the source dictionary files and builds the SQLite .db files into `dictionary_builders/db_files/`.
 
-contributions to **Vocabulizer Dictionary CLI** are welcome. If you’d like to help, here are a few ways you can contribute:
+## Contributing
 
-- **Add Support for More Languages:** Extend the tool to handle dictionaries in additional languages.
-- **Submit Bug Reports and Feature Requests:** Report any bugs or suggest new features.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-To contribute, please fork the repository, make your changes, and submit a pull request. 
+## Data Attribution
 
-[Contributing guide](CONTRIBUTING.md). 
+The dictionary databases built by this tool use data from the
+[Electronic Dictionary Research and Development Group](https://www.edrdg.org/)
+(EDRDG). The JMdict/EDICT and KANJIDIC2 files are licensed under
+[CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).
+The generated .db files are derivative works and inherit this license.
+
+See [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for full details.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE). 
+Source code is licensed under the [MIT License](LICENSE).
+Dictionary data has its own licensing - see above.
