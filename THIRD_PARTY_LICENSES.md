@@ -30,6 +30,19 @@ used in conformance with the Group's licence.
 
 ---
 
+## RADKFILE / KRADFILE
+
+**Source:** Electronic Dictionary Research and Development Group (EDRDG)
+**URL:** https://www.edrdg.org/krad/kradinf.html
+**License:** Creative Commons Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
+
+This tool uses the RADKFILE (kanji-radical decomposition) file, which is the
+property of the Electronic Dictionary Research and Development Group (EDRDG)
+and is used in conformance with the Group's licence. Original data by
+Jim Breen and Michael Raine.
+
+---
+
 ## UniDic
 
 **Source:** National Institute for Japanese Language and Linguistics (NINJAL)

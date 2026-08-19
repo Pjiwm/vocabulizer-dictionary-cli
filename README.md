@@ -29,7 +29,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 The dictionary databases built by this tool use data from the
 [Electronic Dictionary Research and Development Group](https://www.edrdg.org/)
-(EDRDG). The JMdict/EDICT and KANJIDIC2 files are licensed under
+(EDRDG). The JMdict/EDICT, KANJIDIC2, and RADKFILE files are licensed under
 [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).
 The generated .db files are derivative works and inherit this license.
 

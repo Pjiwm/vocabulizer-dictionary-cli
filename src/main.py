@@ -11,7 +11,7 @@ from tqdm import tqdm
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR))
 from database_installers.dictionaryinstaller import DictionaryInstaller
-from database_installers import jmdict, kanjidic, jlpt, pitch_accent
+from database_installers import jmdict, kanjidic, jlpt, pitch_accent, radkfile
 
 DOWNLOADS_DIR = ROOT_DIR / "downloads"
 DB_DIR = ROOT_DIR / "db_files"
@@ -73,6 +73,13 @@ def build_dictionary(dictionary):
         print(f"Failed to download KANJIDIC for {name}. Skipping.")
         return
 
+    radkfile_file = download_file(
+        f"{name} (RADKFILE)", dictionary["radkfile_url"], dictionary["radkfile_file"]
+    )
+    if not radkfile_file:
+        print(f"Failed to download RADKFILE for {name}. Skipping.")
+        return
+
     installer = DictionaryInstaller(db_file_name)
     installer.db_dir = DB_DIR
     installer.extract_dir = str(EXTRACT_DIR)
@@ -90,6 +97,8 @@ def build_dictionary(dictionary):
     kanjidic_extract = str(EXTRACT_DIR / "kanjidic")
     os.makedirs(kanjidic_extract, exist_ok=True)
     kanjidic.extract_and_populate(kanjidic_file, kanjidic_extract, cursor, conn)
+
+    radkfile.extract_and_populate(radkfile_file, str(EXTRACT_DIR / "radkfile"), cursor, conn)
 
     print("  Building kanji_word_map...")
     cursor.execute("""
@@ -132,6 +141,7 @@ def build_dictionary(dictionary):
 
     os.remove(jmdict_file)
     os.remove(kanjidic_file)
+    os.remove(radkfile_file)
 
     print(f"=== {name} complete ===\n")
 
