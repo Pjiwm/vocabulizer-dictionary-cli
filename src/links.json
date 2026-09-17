@@ -30,5 +30,15 @@
             "radkfile_file": "radkfile.gz",
             "dbFileName": "Japanese_Spanish.db"
         }
-    ]
+    ],
+    "tatoeba": {
+        "name": "Example Sentences (Tatoeba)",
+        "indices_url": "https://downloads.tatoeba.org/exports/jpn_indices.tar.bz2",
+        "indices_file": "jpn_indices.tar.bz2",
+        "jpn_sentences_url": "https://downloads.tatoeba.org/exports/per_language/jpn/jpn_sentences.tsv.bz2",
+        "jpn_sentences_file": "jpn_sentences.tsv.bz2",
+        "eng_sentences_url": "https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences.tsv.bz2",
+        "eng_sentences_file": "eng_sentences.tsv.bz2",
+        "dbFileName": "examples.db"
+    }
 }

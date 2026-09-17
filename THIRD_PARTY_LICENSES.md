@@ -76,3 +76,16 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+---
+
+## Tatoeba Project / Tanaka Corpus
+
+**Source:** The Tatoeba Project
+**URL:** https://tatoeba.org/en/downloads
+**License:** Creative Commons Attribution 2.0 France (CC BY 2.0 FR)
+
+The example sentences and the Japanese word index (jpn_indices) used to build
+examples.db come from the Tatoeba Project, which incorporates the Tanaka Corpus.
+The generated examples.db is a derivative work and is used in conformance with
+the CC BY 2.0 FR licence. See https://creativecommons.org/licenses/by/2.0/fr/.

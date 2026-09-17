@@ -35,6 +35,9 @@ The generated .db files are derivative works and inherit this license.
 
 Pitch accent data is extracted from [UniDic](https://clrd.ninjal.ac.jp/unidic/) (NINJAL, BSD 3-Clause).
 
+Example sentences (examples.db) come from the [Tatoeba Project](https://tatoeba.org/en/downloads),
+licensed under [CC BY 2.0 FR](https://creativecommons.org/licenses/by/2.0/fr/).
+
 See [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for full details.
 
 ## License
