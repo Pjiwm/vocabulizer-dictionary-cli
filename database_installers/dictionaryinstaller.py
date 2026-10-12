@@ -44,6 +44,7 @@ class DictionaryInstaller:
                 stroke_count INTEGER,
                 grade INTEGER,
                 jlpt_level INTEGER,
+                freq INTEGER,
                 meanings TEXT,
                 readings_on TEXT,
                 readings_kun TEXT
@@ -64,6 +65,21 @@ class DictionaryInstaller:
                 PRIMARY KEY (character, sequence)
             )
         ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS radical (
+                radical TEXT PRIMARY KEY,
+                strokes INTEGER
+            )
+        ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS kanji_radical (
+                character TEXT NOT NULL,
+                radical TEXT NOT NULL,
+                PRIMARY KEY (character, radical)
+            )
+        ''')
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_kr_radical ON kanji_radical(radical)')
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_kr_char ON kanji_radical(character)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_kwm_sequence ON kanji_word_map(sequence)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_sense_term ON senses(term)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_sense_reading ON senses(reading)')

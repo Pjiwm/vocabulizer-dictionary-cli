@@ -30,6 +30,36 @@ used in conformance with the Group's licence.
 
 ---
 
+## RADKFILE / KRADFILE
+
+**Source:** Electronic Dictionary Research and Development Group (EDRDG)
+**URL:** https://www.edrdg.org/krad/kradinf.html
+**License:** Creative Commons Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
+
+This tool uses the RADKFILE (kanji-radical decomposition) file, which is the
+property of the Electronic Dictionary Research and Development Group (EDRDG)
+and is used in conformance with the Group's licence. Original data by
+Jim Breen and Michael Raine.
+
+---
+
+## JLPT word and kanji lists (Jonathan Waller)
+
+**Source:** Jonathan Waller's JLPT Resources
+**URL:** https://www.tanos.co.uk/jlpt/
+**License:** Creative Commons Attribution (CC BY)
+
+The JLPT levels (N5-N1) stored for words and kanji come from Jonathan Waller's
+JLPT lists, obtained through the two repositories below.
+
+- Word lists: open-anki-jlpt-decks by Jamie Sinclair (MIT),
+  https://github.com/jamsinclair/open-anki-jlpt-decks, based on
+  https://github.com/chyyran/jlpt-anki-decks
+- Kanji list: kanji-data by David Gouveia (MIT),
+  https://github.com/davidluzgouveia/kanji-data (only the `jlpt_new` field is used)
+
+---
+
 ## UniDic
 
 **Source:** National Institute for Japanese Language and Linguistics (NINJAL)
@@ -63,3 +93,16 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+---
+
+## Tatoeba Project / Tanaka Corpus
+
+**Source:** The Tatoeba Project
+**URL:** https://tatoeba.org/en/downloads
+**License:** Creative Commons Attribution 2.0 France (CC BY 2.0 FR)
+
+The example sentences and the Japanese word index (jpn_indices) used to build
+examples.db come from the Tatoeba Project, which incorporates the Tanaka Corpus.
+The generated examples.db is a derivative work and is used in conformance with
+the CC BY 2.0 FR licence. See https://creativecommons.org/licenses/by/2.0/fr/.
