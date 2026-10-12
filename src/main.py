@@ -111,12 +111,7 @@ def build_dictionary(dictionary):
     cursor.execute("SELECT COUNT(*) FROM kanji_word_map")
     print(f"  kanji_word_map: {cursor.fetchone()[0]} entries")
 
-    print("  Backfilling N5 kanji (grade 1)...")
-    cursor.execute("UPDATE kanji SET jlpt_level = 5 WHERE grade = 1")
-    n5_backfilled = cursor.rowcount
-    conn.commit()
-    print(f"  N5 kanji backfilled: {n5_backfilled}")
-
+    jlpt.populate_kanji_jlpt(cursor, conn)
     jlpt.populate_word_jlpt(cursor, conn)
     pitch_accent.populate_pitch_accent(cursor, conn)
 

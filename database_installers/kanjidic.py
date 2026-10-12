@@ -13,6 +13,9 @@ def extract_and_populate(zip_path, extract_dir, cursor, conn):
         [3] tags         - Space-separated tags
         [4] meanings     - Array of meaning strings
         [5] stats        - Object with stroke_count, grade, jlpt, freq, etc.
+
+    jlpt_level is left NULL: KANJIDIC2 still carries the pre-2010 four-level JLPT,
+    so jlpt.populate_kanji_jlpt fills it from an N5-N1 list instead.
     """
     print(f"Extracting {zip_path} to {extract_dir}")
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
@@ -37,15 +40,13 @@ def extract_and_populate(zip_path, extract_dir, cursor, conn):
                     readings_kun = entry[2]  # space-separated
                     # entry[3] = tags (not stored separately)
                     meanings_list = entry[4]  # array of strings
-                    stats = entry[5]          # dict with stroke_count, grade, jlpt, freq
+                    stats = entry[5]
 
                     meanings = ', '.join(meanings_list) if meanings_list else ''
 
-                    # Extract stats — keys vary but common ones are:
-                    # "strokes", "grade", "jlpt", "freq"
                     stroke_count = None
                     grade = None
-                    jlpt_level = None
+                    freq = None
 
                     if isinstance(stats, dict):
                         # Try common key names
@@ -63,21 +64,20 @@ def extract_and_populate(zip_path, extract_dir, cursor, conn):
                                 except (ValueError, TypeError):
                                     pass
                                 break
-                        for key in ('jlpt', 'jlpt_level'):
-                            if key in stats:
-                                try:
-                                    jlpt_level = int(stats[key])
-                                except (ValueError, TypeError):
-                                    pass
-                                break
+                        # Rank among the 2,500 most used kanji in newspapers; absent for the rest.
+                        if 'freq' in stats:
+                            try:
+                                freq = int(stats['freq'])
+                            except (ValueError, TypeError):
+                                pass
 
                     cursor.execute(
                         '''
                         INSERT OR REPLACE INTO kanji
-                        (character, stroke_count, grade, jlpt_level, meanings, readings_on, readings_kun)
+                        (character, stroke_count, grade, freq, meanings, readings_on, readings_kun)
                         VALUES (?, ?, ?, ?, ?, ?, ?)
                         ''',
-                        (character, stroke_count, grade, jlpt_level, meanings, readings_on, readings_kun)
+                        (character, stroke_count, grade, freq, meanings, readings_on, readings_kun)
                     )
                     count += 1
 

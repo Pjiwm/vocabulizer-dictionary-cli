@@ -12,6 +12,10 @@ JLPT_CSV_URLS = {
     1: "https://raw.githubusercontent.com/jamsinclair/open-anki-jlpt-decks/main/src/n1.csv",
 }
 
+# KANJIDIC2 still uses the pre-2010 four levels; this list's `jlpt_new` holds the
+# N5-N1 levels from Jonathan Waller's JLPT lists (tanos.co.uk).
+KANJI_JLPT_URL = "https://raw.githubusercontent.com/davidluzgouveia/kanji-data/master/kanji.json"
+
 # Extract the canonical JLPT level from the tags field.
 # Tags contain entries like "JLPT_N5", "JLPT_N4", "JLPT_5", "JLPT_4" etc.
 _JLPT_TAG_RE = re.compile(r'JLPT_N?(\d)')
@@ -100,3 +104,26 @@ def populate_word_jlpt(cursor, conn):
 
     conn.commit()
     print(f"  JLPT word data: {total_matched} matched, {total_unmatched} unmatched")
+
+
+def populate_kanji_jlpt(cursor, conn):
+    """Download the N5-N1 kanji list and set jlpt_level on the kanji table."""
+    print("  Downloading JLPT kanji list...")
+    response = requests.get(KANJI_JLPT_URL)
+    response.raise_for_status()
+
+    levels = {
+        character: entry['jlpt_new']
+        for character, entry in response.json().items()
+        if entry.get('jlpt_new') is not None
+    }
+    cursor.executemany(
+        'UPDATE kanji SET jlpt_level = ? WHERE character = ?',
+        [(level, character) for character, level in levels.items()],
+    )
+    conn.commit()
+
+    for level in [5, 4, 3, 2, 1]:
+        cursor.execute('SELECT COUNT(*) FROM kanji WHERE jlpt_level = ?', (level,))
+        listed = sum(1 for lv in levels.values() if lv == level)
+        print(f"    N{level}: {cursor.fetchone()[0]} of {listed} listed kanji set")
