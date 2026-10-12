@@ -44,6 +44,7 @@ class DictionaryInstaller:
                 stroke_count INTEGER,
                 grade INTEGER,
                 jlpt_level INTEGER,
+                freq INTEGER,
                 meanings TEXT,
                 readings_on TEXT,
                 readings_kun TEXT

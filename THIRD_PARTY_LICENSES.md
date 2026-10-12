@@ -43,6 +43,23 @@ Jim Breen and Michael Raine.
 
 ---
 
+## JLPT word and kanji lists (Jonathan Waller)
+
+**Source:** Jonathan Waller's JLPT Resources
+**URL:** https://www.tanos.co.uk/jlpt/
+**License:** Creative Commons Attribution (CC BY)
+
+The JLPT levels (N5-N1) stored for words and kanji come from Jonathan Waller's
+JLPT lists, obtained through the two repositories below.
+
+- Word lists: open-anki-jlpt-decks by Jamie Sinclair (MIT),
+  https://github.com/jamsinclair/open-anki-jlpt-decks, based on
+  https://github.com/chyyran/jlpt-anki-decks
+- Kanji list: kanji-data by David Gouveia (MIT),
+  https://github.com/davidluzgouveia/kanji-data (only the `jlpt_new` field is used)
+
+---
+
 ## UniDic
 
 **Source:** National Institute for Japanese Language and Linguistics (NINJAL)

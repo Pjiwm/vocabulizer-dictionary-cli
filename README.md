@@ -33,6 +33,9 @@ The dictionary databases built by this tool use data from the
 [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).
 The generated .db files are derivative works and inherit this license.
 
+JLPT levels (N5-N1) for words and kanji come from [Jonathan Waller's JLPT lists](https://www.tanos.co.uk/jlpt/) (CC BY),
+via [open-anki-jlpt-decks](https://github.com/jamsinclair/open-anki-jlpt-decks) and [kanji-data](https://github.com/davidluzgouveia/kanji-data) (both MIT).
+
 Pitch accent data is extracted from [UniDic](https://clrd.ninjal.ac.jp/unidic/) (NINJAL, BSD 3-Clause).
 
 Example sentences (examples.db) come from the [Tatoeba Project](https://tatoeba.org/en/downloads),
