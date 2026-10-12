@@ -29,11 +29,14 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 The dictionary databases built by this tool use data from the
 [Electronic Dictionary Research and Development Group](https://www.edrdg.org/)
-(EDRDG). The JMdict/EDICT and KANJIDIC2 files are licensed under
+(EDRDG). The JMdict/EDICT, KANJIDIC2, and RADKFILE files are licensed under
 [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).
 The generated .db files are derivative works and inherit this license.
 
 Pitch accent data is extracted from [UniDic](https://clrd.ninjal.ac.jp/unidic/) (NINJAL, BSD 3-Clause).
+
+Example sentences (examples.db) come from the [Tatoeba Project](https://tatoeba.org/en/downloads),
+licensed under [CC BY 2.0 FR](https://creativecommons.org/licenses/by/2.0/fr/).
 
 See [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for full details.
 
