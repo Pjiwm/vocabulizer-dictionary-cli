@@ -11,7 +11,7 @@ from tqdm import tqdm
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR))
 from database_installers.dictionaryinstaller import DictionaryInstaller
-from database_installers import jmdict, kanjidic, jlpt, pitch_accent, radkfile, examples
+from database_installers import jmdict, kanjidic, jlpt, pitch_accent
 
 DOWNLOADS_DIR = ROOT_DIR / "downloads"
 DB_DIR = ROOT_DIR / "db_files"
@@ -73,13 +73,6 @@ def build_dictionary(dictionary):
         print(f"Failed to download KANJIDIC for {name}. Skipping.")
         return
 
-    radkfile_file = download_file(
-        f"{name} (RADKFILE)", dictionary["radkfile_url"], dictionary["radkfile_file"]
-    )
-    if not radkfile_file:
-        print(f"Failed to download RADKFILE for {name}. Skipping.")
-        return
-
     installer = DictionaryInstaller(db_file_name)
     installer.db_dir = DB_DIR
     installer.extract_dir = str(EXTRACT_DIR)
@@ -97,8 +90,6 @@ def build_dictionary(dictionary):
     kanjidic_extract = str(EXTRACT_DIR / "kanjidic")
     os.makedirs(kanjidic_extract, exist_ok=True)
     kanjidic.extract_and_populate(kanjidic_file, kanjidic_extract, cursor, conn)
-
-    radkfile.extract_and_populate(radkfile_file, str(EXTRACT_DIR / "radkfile"), cursor, conn)
 
     print("  Building kanji_word_map...")
     cursor.execute("""
@@ -141,55 +132,8 @@ def build_dictionary(dictionary):
 
     os.remove(jmdict_file)
     os.remove(kanjidic_file)
-    os.remove(radkfile_file)
 
     print(f"=== {name} complete ===\n")
-
-
-def build_examples():
-    """Download Tatoeba sources and build the standalone examples.db."""
-    cfg = data["tatoeba"]
-    print(f"\n=== Building {cfg['name']} ===\n")
-
-    indices = download_file(
-        f"{cfg['name']} (indices)", cfg["indices_url"], cfg["indices_file"]
-    )
-    jpn = download_file(
-        f"{cfg['name']} (jpn)", cfg["jpn_sentences_url"], cfg["jpn_sentences_file"]
-    )
-    eng = download_file(
-        f"{cfg['name']} (eng)", cfg["eng_sentences_url"], cfg["eng_sentences_file"]
-    )
-    if not (indices and jpn and eng):
-        print("Failed to download Tatoeba sources. Skipping.")
-        return
-
-    db_file = DB_DIR / cfg["dbFileName"]
-    DB_DIR.mkdir(exist_ok=True)
-    if db_file.exists():
-        db_file.unlink()
-
-    conn = sqlite3.connect(db_file)
-    cursor = conn.cursor()
-    examples.create_tables(cursor, conn)
-    examples.extract_and_populate(indices, jpn, eng, cursor, conn)
-
-    cursor.execute("SELECT COUNT(*) FROM sentences")
-    sentence_count = cursor.fetchone()[0]
-    cursor.execute("SELECT COUNT(DISTINCT base_form) FROM word_examples")
-    base_count = cursor.fetchone()[0]
-    cursor.execute("SELECT COUNT(*) FROM word_examples WHERE is_good = 1")
-    good_count = cursor.fetchone()[0]
-    print(f"\n  Database: {cfg['dbFileName']}")
-    print(
-        f"  Sentences: {sentence_count}, base forms: {base_count}, "
-        f"good examples: {good_count}\n"
-    )
-
-    conn.close()
-    for f in (indices, jpn, eng):
-        os.remove(f)
-    print(f"=== {cfg['name']} complete ===\n")
 
 
 def main():
@@ -197,7 +141,6 @@ def main():
         os.system("cls" if os.name == "nt" else "clear")
 
         choices = [d["name"] for d in data["dictionaries"]]
-        choices.append(data["tatoeba"]["name"])
         choices.append("Build All")
         choices.append("Exit")
 
@@ -212,10 +155,6 @@ def main():
             if inquirer.confirm(message="Build all dictionaries?").execute():
                 for dictionary in data["dictionaries"]:
                     build_dictionary(dictionary)
-                build_examples()
-        elif selected == data["tatoeba"]["name"]:
-            if inquirer.confirm(message=f"Build {selected}?").execute():
-                build_examples()
         else:
             dictionary = next(
                 d for d in data["dictionaries"] if d["name"] == selected
