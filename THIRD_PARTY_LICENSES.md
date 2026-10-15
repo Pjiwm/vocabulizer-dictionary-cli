@@ -60,6 +60,19 @@ JLPT lists, obtained through the two repositories below.
 
 ---
 
+## Jiten word frequency list
+
+**Source:** Jiten, global frequency list (all media combined)
+**URL:** https://jiten.moe/frequency-dictionaries
+**License:** Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+
+The word frequency ranks (`words.freq_rank`) in the dictionary database are derived
+from Jiten's global frequency list (downloaded 2026-10-15), matched onto JMdict entries
+and limited to the 30,000 most frequent entries. The derived data is distributed under
+the same CC BY-SA 4.0 licence. See https://creativecommons.org/licenses/by-sa/4.0/.
+
+---
+
 ## UniDic
 
 **Source:** National Institute for Japanese Language and Linguistics (NINJAL)
