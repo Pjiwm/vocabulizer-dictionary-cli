@@ -23,7 +23,8 @@ class DictionaryInstaller:
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS words (
                 sequence INTEGER PRIMARY KEY,
-                jlpt_level INTEGER
+                jlpt_level INTEGER,
+                freq_rank INTEGER
             )
         ''')
         cursor.execute('''

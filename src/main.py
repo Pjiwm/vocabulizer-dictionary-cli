@@ -11,7 +11,7 @@ from tqdm import tqdm
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR))
 from database_installers.dictionaryinstaller import DictionaryInstaller
-from database_installers import jmdict, kanjidic, jlpt, pitch_accent, radkfile, examples
+from database_installers import jmdict, kanjidic, jlpt, frequency, pitch_accent, radkfile, examples
 
 DOWNLOADS_DIR = ROOT_DIR / "downloads"
 DB_DIR = ROOT_DIR / "db_files"
@@ -113,6 +113,7 @@ def build_dictionary(dictionary):
 
     jlpt.populate_kanji_jlpt(cursor, conn)
     jlpt.populate_word_jlpt(cursor, conn)
+    frequency.populate_word_frequency(cursor, conn, ROOT_DIR / "data" / frequency.JITEN_CSV)
     pitch_accent.populate_pitch_accent(cursor, conn)
 
     cursor.execute("SELECT COUNT(*) FROM words")
@@ -123,13 +124,15 @@ def build_dictionary(dictionary):
     kanji_count = cursor.fetchone()[0]
     cursor.execute("SELECT COUNT(*) FROM words WHERE jlpt_level IS NOT NULL")
     jlpt_count = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM words WHERE freq_rank IS NOT NULL")
+    ranked_count = cursor.fetchone()[0]
     cursor.execute(
         "SELECT COUNT(DISTINCT term || reading) FROM senses WHERE pitch_accent IS NOT NULL"
     )
     pitch_count = cursor.fetchone()[0]
     print(f"\n  Database: {db_file_name}")
     print(f"  Words: {word_count}, Senses: {sense_count}, Kanji: {kanji_count}")
-    print(f"  Words with JLPT: {jlpt_count}, With pitch accent: {pitch_count}\n")
+    print(f"  Words with JLPT: {jlpt_count}, With frequency rank: {ranked_count}, With pitch accent: {pitch_count}\n")
 
     conn.close()
     installer.cleanup()
